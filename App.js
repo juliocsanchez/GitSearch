@@ -3,16 +3,13 @@ import { Modal, SafeAreaView, StyleSheet, Text, Touchable, TouchableOpacity, Vie
 import { FontAwesome } from '@expo/vector-icons'; 
 import * as React from 'react';
 import {useState} from 'react';
+import { useEffect } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { TextInput } from 'react-native-gesture-handler';
+import { FlatList, TextInput } from 'react-native-gesture-handler';
 import { Ionicons } from '@expo/vector-icons'; 
 import { Feather } from '@expo/vector-icons'; 
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 import { MaterialIcons } from '@expo/vector-icons'; 
-
-
-
-
 
 // https://api.github.com/users/{id} -->  usuários
 // https://api.github.com/users/{id}/followers --> seguidores
@@ -21,11 +18,86 @@ import { MaterialIcons } from '@expo/vector-icons';
 
 const Stack = createNativeStackNavigator();
 
+const Followers = () =>{
+  const [followers, setFollowers] = useState([])
+
+  useEffect(() => {
+    fetch("https://api.github.com/users/juliocsanchez/followers")
+    .then((response) => response.json())
+    .then((data) => setFollowers(data));
+  }, []);
+
+
+
+
+  return (
+    <View style={styles.repo}>
+    <FlatList
+    data={followers}
+    keyExtractor={(element) => element.login}
+    renderItem={({item}) => {
+      return (
+        <Text style={styles.itemRepo}>{item.login}</Text>
+      );
+    }}
+    />
+
+    </View>
+    );
+}
+
+
+
+const Repo = () =>{
+
+const [repo, setRepo] =useState([]);
+
+useEffect(() => {
+  fetch("https://api.github.com/users/juliocsanchez/repos")
+  .then((response) => response.json())
+  .then((data) => setRepo(data));
+}, []);
+
+return (
+<View style={styles.repo}>
+<FlatList
+    data={repo}
+    keyExtractor={(element) => element.name}
+    renderItem={({item}) => {
+      return (
+        <Text style={styles.itemRepo}>{item.name}</Text>
+      );
+    }}
+    />
+</View>
+);
+}
+
+function Bio(){
+
+  const [bio, setBio] = useState(null);
+  useEffect(() => {
+    fetch("https://api.github.com/users/juliocsanchez")
+    .then((response) => response.json())
+    .then((data) => setBio(data.bio));
+  }, []);
+
+  return(
+      <View style={styles.container}> 
+        <Text style={{fontSize:30,fontWeight:'bold',bottom:20}}>A Litte About This User</Text>
+        <View style={styles.bio}>
+        <Text style={styles.textbio}>{bio == null ? <Text> Esse usário não possui biografia</Text> :  <Text>{bio}</Text>}</Text> 
+        </View>
+      </View>
+  );
+}
 
 function Home ({navigation}){
   const [modal,setModal] = useState(false)
+  const [id, setId] = useState('')
 
   return(
+
    
     <SafeAreaView style={styles.container}>
 
@@ -47,8 +119,10 @@ function Home ({navigation}){
     <TextInput style={styles.textInput}
     placeholder="ID"
     keyboardType='numeric'
-    >
-    </TextInput>
+    value={id}
+    onChangeText ={idtext => setId(idtext)}
+    />
+    
 
     <TouchableOpacity style={styles.OkButton} onPress={() => navigation.navigate("Profile")}>
     <Text style={styles.text}>Ok</Text>
@@ -76,20 +150,42 @@ function Home ({navigation}){
 }
 
 function Profile ({navigation}){
+  const [avatar, setAvatar] = useState(null);
+  const [orgs, setOrgs] = useState(null);
+  const [user, setUser] = useState(null);
+  const [name, setName] = useState(null);
+
+  useEffect(() => {
+    fetch("https://api.github.com/users/juliocsanchez")
+    .then((response) => response.json())
+    .then((data) => setAvatar(data.avatar_url));
+  }, []);
+
+  useEffect(() => {
+    fetch("https://api.github.com/users/juliocsanchez")
+    .then((response) => response.json())
+    .then((data) => setUser(data.login));
+  }, []);
+
+  useEffect(() => {
+    fetch("https://api.github.com/users/juliocsanchez")
+    .then((response) => response.json())
+    .then((data) => setName(data.name));
+  }, []);
+
+  
   return(
     <SafeAreaView style={styles.containerProfile}>
       
-    <View style={styles.squareProfile}>
-    <TouchableOpacity style={styles.lupa}>
-    <FontAwesome name="search" size={25} color="white" />
-    </TouchableOpacity>
-    </View>
-    <Text style ={{fontSize:30, fontWeight:'bold'}}>Julio Sousa</Text>
-    <Text style ={{fontSize:20, color:'#8f8e93'}}>@juliocsanchez</Text>
+    <Text style={styles.squareProfile}>{avatar}</Text>
+
+    
+    <Text style ={{fontSize:30, fontWeight:'bold'}}>{name}</Text>
+    <Text style ={{fontSize:20, color:'#8f8e93'}}>@{user}</Text>
 
     <View style={styles.info}>
 
-    <TouchableOpacity style={[styles.specifies,{borderTopEndRadius:20, borderTopStartRadius:20}]}>
+    <TouchableOpacity style={[styles.specifies,{borderTopEndRadius:20, borderTopStartRadius:20}]} onPress={() => navigation.navigate('Bio')}>
 
     <View style={styles.boxIcons}>
     <Ionicons name="person-outline" size={30} color="black" />
@@ -120,12 +216,12 @@ function Profile ({navigation}){
     </TouchableOpacity>
 
 
-    <TouchableOpacity style={styles.specifies}>
+    <TouchableOpacity style={styles.specifies} onPress ={() => navigation.navigate('Repo')}>
     <View style={styles.boxIcons}>
     <Ionicons name="document-text-outline" size={30} color="black" />
     </View>
     <View>
-    <Text style={{fontSize:20, fontWeight:'bold',marginLeft:15}} > Repositórios</Text>
+    <Text style={{fontSize:20, fontWeight:'bold',marginLeft:15}} >Repositórios</Text>
     <Text style={{fontSize:15, color:'#bfbfbf',marginLeft:15}} >Lista contendo todo os repositórios</Text>
     </View>
     <View style ={{justifyContent:'flex-end', marginLeft:30}}>
@@ -134,7 +230,7 @@ function Profile ({navigation}){
     </TouchableOpacity >
 
 
-    <TouchableOpacity style={[styles.specifies,{borderBottomEndRadius:20, borderBottomStartRadius:20}]}>
+    <TouchableOpacity style={[styles.specifies,{borderBottomEndRadius:20, borderBottomStartRadius:20}]} onPress={() => navigation.navigate('Followers')}>
     <View style={styles.boxIcons}>
     <MaterialCommunityIcons name="face-man" size={30} color="black" />
     </View>
@@ -142,7 +238,7 @@ function Profile ({navigation}){
     <Text style={{fontSize:20, fontWeight:'bold',marginLeft:15}} >Seguidores</Text>
     <Text style={{fontSize:15, color:'#bfbfbf',marginLeft:15}} >Lista de seguidores</Text>
     </View>
-    <View style ={{justifyContent:'flex-end', marginLeft:130}}>
+    <View style ={{justifyContent:'flex-end', marginLeft:137}}>
     <MaterialIcons name="arrow-forward-ios" size={20} color="black" />
     </View>
     </TouchableOpacity>
@@ -162,22 +258,18 @@ function Profile ({navigation}){
   );
 }
 
-
 export default function App() {
+
   return (
-   
-    <NavigationContainer >
-
-    <Stack.Navigator>
-      <Stack.Screen name='Home' component={Home}/>
-       <Stack.Screen name='Profile' component={Profile}/> 
+ <NavigationContainer >
+      <Stack.Navigator>
+        <Stack.Screen name='Home' component={Home}/>
+        <Stack.Screen name='Profile' component={Profile}/> 
+        <Stack.Screen name ='Bio' component={Bio}/>
+        <Stack.Screen name ='Repo' component={Repo}/>
+        <Stack.Screen name ='Followers' component={Followers}/>
     </Stack.Navigator>
-    
-
-    </NavigationContainer>
-
-
-   
+ </NavigationContainer>
   );
 }
 
@@ -328,5 +420,36 @@ const styles = StyleSheet.create({
     flexDirection:'row'
   },
 
-  
+  bio:{
+    width:400,
+    height:300,
+    backgroundColor:'#ececec',
+    borderRadius:30,
+    justifyContent:'center',
+    alignItems:'center',
+    borderWidth:1,
+    borderColor:'black'
+  },
+
+  textbio:{
+    justifyContent:'center',
+    alignItems:'center',
+    fontSize:20,
+    textAlign:'center',
+  },
+  itemRepo: {
+    widht:100,
+    height: 65,
+    fontSize: 25,
+    borderWidth: 0.5,
+    borderColor:'black',
+
+    
+  },
+  repo:{
+    flex:1,
+    backgroundColor:'white',
+    
+
+  },
 });
