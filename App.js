@@ -21,7 +21,7 @@ const Stack = createNativeStackNavigator();
 
 function Home() {
 
-  const [modal, setModal] = useState(false);
+  const [modal, setModal] = useState(false); 
   const [id, setId] = useState('');
 
 
@@ -32,8 +32,6 @@ function Home() {
       id: id,
     })
   };
-
-  
 
   return (
 
@@ -49,15 +47,18 @@ function Home() {
         }}
       >
 
-        <SafeAreaView style={styles.containerSearch}>
-         
 
+        <SafeAreaView style={styles.containerSearch}>
+
+        <View style ={styles.div}>
+        <Text style={styles.textAlert}>Digite o nome de usuário</Text>
+        </View>
           <TouchableOpacity style={styles.backButton} onPress={() => setModal(!modal)}>
-            <Ionicons name="arrow-back-sharp" size={25} color="black" />
+            <Ionicons name="arrow-back-sharp" size={25} color="black"/>
           </TouchableOpacity>
 
           <TextInput style={styles.textInput}
-            placeholder="ID"
+            placeholder="User"
             keyboardType='default'
             value={id}
             onChangeText={idtext => setId(idtext)}
@@ -72,7 +73,7 @@ function Home() {
 
         </SafeAreaView>
 
-        <Text style={styles.textAlert}>Digite o ID do user</Text>
+       
 
 
       </Modal>
@@ -98,30 +99,29 @@ function Profile({ navigation }) {
   const [orgs, setOrgs] = useState(null);
 
   const route = useRoute();
-  const busca = route.params.id;
+  const search = route.params.id;
 
   const Repository = () => {
     navigation.navigate ('Repo',{
-      id: busca,
+      id: search,
     })
   };
 
   const Biography= () => {
     navigation.navigate ('Bio',{
-      id: busca,
+      id: search,
     })
   };
 
   const Followers= () => {
     navigation.navigate ('Followers',{
-      id: busca,
+      id: search,
     })
   };
 
 
-
   useEffect(() => {
-    fetch(`https://api.github.com/users/${busca}`)
+    fetch(`https://api.github.com/users/${search}`)
       .then((response) => response.json())
       .then((data) => {
         return setAvatar(data.avatar_url);
@@ -129,13 +129,13 @@ function Profile({ navigation }) {
   }, []);
 
   useEffect(() => {
-    fetch(`https://api.github.com/users/${busca}`)
+    fetch(`https://api.github.com/users/${search}`)
       .then((response) => response.json())
       .then((data) => setUser(data.login));
   }, []);
 
   useEffect(() => {
-    fetch(`https://api.github.com/users/${busca}`)
+    fetch(`https://api.github.com/users/${search}`)
       .then((response) => response.json())
       .then((data) => setName(data.name));
   }, []);
@@ -233,11 +233,11 @@ const Followers = () => {
 
 
   const route = useRoute();
-  const busca = route.params.id;
+  const search = route.params.id;
 
 
   useEffect(() => {
-    fetch(`https://api.github.com/users/${busca}/followers`)
+    fetch(`https://api.github.com/users/${search}/followers`)
       .then((response) => response.json())
       .then((data) => setFollowers(data));
   }, []);
@@ -267,11 +267,11 @@ const Repo = () => {
   const [repo, setRepo] = useState([]);
 
   const route = useRoute();
-  const busca = route.params.id;
+  const search = route.params.id;
 
 
   useEffect(() => {
-    fetch(`https://api.github.com/users/${busca}/repos`)
+    fetch(`https://api.github.com/users/${search}/repos`)
       .then((response) => response.json())
       .then((data) => setRepo(data));
   }, []);
@@ -296,12 +296,11 @@ function Bio() {
   const [bio, setBio] = useState(null);
 
   const route = useRoute();
-  const busca = route.params.id;
-
+  const search = route.params.id;
 
 
   useEffect(() => {
-    fetch(`https://api.github.com/users/${busca}`)
+    fetch(`https://api.github.com/users/${search}`)
       .then((response) => response.json())
       .then((data) => setBio(data.bio));
   }, []);
@@ -317,15 +316,13 @@ function Bio() {
 }
 
 
-
-
-
 export default function App() {
 
   return (
     <NavigationContainer >
       <Stack.Navigator>
-        <Stack.Screen name='Home' component={Home} />
+        <Stack.Screen name='Home' component={Home} 
+          options={{headerShown: false}}/>
         <Stack.Screen name='Profile' component={Profile} />
         <Stack.Screen name='Bio' component={Bio} />
         <Stack.Screen name='Repo' component={Repo} />
@@ -338,18 +335,21 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '##f8f7fc',
     alignItems: 'center',
     justifyContent: 'center',
-    flexDirection: "column"
-
+    flexDirection: "column",
   },
   containerSearch: {
-    flex: 1,
+    height:120,
     backgroundColor: '#fff',
     alignItems: 'center',
     flexDirection: 'row',
+    flexWrap:'wrap',
     justifyContent: 'center',
+    borderWidth:1,
+    borderColor:'#D3D3D3',
+    borderRadius: 20,
   },
   containerProfile: {
     flex: 1,
@@ -370,7 +370,7 @@ const styles = StyleSheet.create({
 
   },
   textInput: {
-    width: 100,
+    width: 200,
     height: 50,
     backgroundColor: '#ececec',
     justifyContent: 'center',
@@ -396,12 +396,14 @@ const styles = StyleSheet.create({
 
   },
   square: {
-    backgroundColor: '#ececec',
+    backgroundColor: '#fff',
     width: 200,
     height: 200,
     borderRadius: 60,
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
+    borderWidth:1,
+    borderColor:'#D3D3D3'
   },
   squareProfile: {
     backgroundColor: '#ececec',
@@ -434,7 +436,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 80,
-    marginLeft: 10
+    marginLeft: 10,
+  
   },
 
   backButton: {
@@ -444,8 +447,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 80,
-    marginRight: 20
-
+    marginRight: 20,
   },
   reset: {
     width: 380,
@@ -506,12 +508,18 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: 'black',
 
-
   },
   repo: {
     flex: 1,
     backgroundColor: 'white',
+  },
 
-
+  div:{
+    width:500,
+    height:50,
+    alignItems:'center',
+    justifyContent:'center',
+    
+   
   },
 });
