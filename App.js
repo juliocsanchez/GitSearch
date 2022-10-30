@@ -5,7 +5,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { FlatList, TextInput } from 'react-native-gesture-handler';
+import { FlatList, ScrollView, TextInput } from 'react-native-gesture-handler';
 import { Ionicons } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -25,7 +25,7 @@ function Home() {
   const [id, setId] = useState('');
 
 
-  const navigation = useNavigation();
+  const navigation = useNavigation(); 
 
   const SearchID = () => {
     navigation.navigate ('Profile',{
@@ -35,7 +35,7 @@ function Home() {
 
   return (
 
-
+    
     <SafeAreaView style={styles.container}>
 
       <Modal
@@ -144,7 +144,7 @@ function Profile({ navigation }) {
 
   return (
 
-    
+    <ScrollView>
     <SafeAreaView style={styles.containerProfile}>
   
       <Image style={styles.squareProfile}source ={{uri:avatar}}/>
@@ -220,9 +220,8 @@ function Profile({ navigation }) {
         <Text style={{ fontSize: 20, color: 'black' }}>Resetar</Text>
       </TouchableOpacity>
 
-
-
     </SafeAreaView>
+    </ScrollView>
   );
 }
 
@@ -252,7 +251,11 @@ const Followers = () => {
         keyExtractor={(element) => element.login}
         renderItem={({ item }) => {
           return (
-            <Text style={styles.itemRepo}>{item.login}</Text>
+            <View style={{borderWidth:0.5 ,borderColor:'#ececec',flexDirection:'row', justifyContent:'flex-start',alignItems:'center', height:80}}>
+             <Image style={styles.followersProfile} source ={{uri:item.avatar_url}}/>
+             <Text style={{ fontSize: 20, fontWeight: 'bold',marginTop:10,marginLeft:10}} >{item.login}</Text>
+            </View>
+          
           );
         }}
       />
@@ -283,7 +286,10 @@ const Repo = () => {
         keyExtractor={(element) => element.name}
         renderItem={({ item }) => {
           return (
-            <Text style={styles.itemRepo}>{item.name}</Text>
+            <View style={{borderWidth:0.5, borderColor:'#ececec'}}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 15,marginTop:10}} >{item.name}</Text>
+            <Text style={{ fontSize: 15, color: '#bfbfbf', marginLeft: 15, marginBottom:10 }} >{item.description}</Text>
+          </View>
           );
         }}
       />
@@ -306,10 +312,9 @@ function Bio() {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <Text style={{ fontSize: 30, fontWeight: 'bold', bottom: 20 }}>A Litte About This User</Text>
+    <View style={styles.containerBio}>
       <View style={styles.bio}>
-        <Text style={styles.textbio}>{bio == null ? <Text> Esse usário não possui biografia</Text> : <Text>{bio}</Text>}</Text>
+      <Text style={styles.textbio}>{bio == null ? <Text> Esse usário não possui biografia</Text> : <Text>{bio}</Text>}</Text>
       </View>
     </View>
   );
@@ -335,11 +340,19 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '##f8f7fc',
+    backgroundColor: '#f8f7fc',
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: "column",
   },
+  containerBio: {
+    flex: 1,
+    backgroundColor: 'white',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: "column",
+  },
+  
   containerSearch: {
     height:120,
     backgroundColor: '#fff',
@@ -484,23 +497,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row'
   },
 
-  bio: {
-    width: 400,
-    height: 300,
-    backgroundColor: '#ececec',
-    borderRadius: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: 'black'
-  },
-
   textbio: {
     justifyContent: 'center',
     alignItems: 'center',
     fontSize: 20,
     textAlign: 'center',
+    fontWeight:'bold'
   },
+
   itemRepo: {
     widht: 100,
     height: 65,
@@ -519,7 +523,10 @@ const styles = StyleSheet.create({
     height:50,
     alignItems:'center',
     justifyContent:'center',
-    
-   
+  },
+  followersProfile: {
+    width: 50,
+    height: 50,
+    borderRadius: 60,
   },
 });
