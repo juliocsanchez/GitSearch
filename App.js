@@ -1,5 +1,5 @@
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
-import { Modal, SafeAreaView, StyleSheet, Text, Touchable, TouchableOpacity, View, Image } from 'react-native';
+import { Modal, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import * as React from 'react';
 import { useState } from 'react';
@@ -28,14 +28,12 @@ function Home() {
   const navigation = useNavigation(); 
 
   const SearchID = () => {
-    navigation.navigate ('Profile',{
+    navigation.push ('Profile',{  
       id: id,
     })
   };
 
   return (
-
-    
     <SafeAreaView style={styles.container}>
 
       <Modal
@@ -47,12 +45,12 @@ function Home() {
         }}
       >
 
-
         <SafeAreaView style={styles.containerSearch}>
 
         <View style ={styles.div}>
         <Text style={styles.textAlert}>Digite o nome de usuário</Text>
-        </View>
+        
+        <View style={styles.rowInput}>
           <TouchableOpacity style={styles.backButton} onPress={() => setModal(!modal)}>
             <Ionicons name="arrow-back-sharp" size={25} color="black"/>
           </TouchableOpacity>
@@ -68,13 +66,10 @@ function Home() {
           <TouchableOpacity style={styles.OkButton} onPress={SearchID} >
             <Text style={styles.text}>Ok</Text>
           </TouchableOpacity>
+          </View>
 
-
-
+          </View>
         </SafeAreaView>
-
-       
-
 
       </Modal>
 
@@ -96,7 +91,8 @@ function Profile({ navigation }) {
   const [avatar, setAvatar] = useState(null);
   const [user, setUser] = useState(null);
   const [name, setName] = useState(null);
-  const [orgs, setOrgs] = useState(null);
+  const [erro, setErro] = useState(null);
+  
 
   const route = useRoute();
   const search = route.params.id;
@@ -116,6 +112,18 @@ function Profile({ navigation }) {
   const Followers= () => {
     navigation.navigate ('Followers',{
       id: search,
+    })
+  };
+
+  const Orgs= () => {
+    navigation.navigate ('Orgs',{
+      id: search,
+    })
+  };
+
+  const Resetar= () => {
+    navigation.push ('Home',{
+      id: null,
     })
   };
 
@@ -140,17 +148,29 @@ function Profile({ navigation }) {
       .then((data) => setName(data.name));
   }, []);
 
- 
+  useEffect(() => {
+    fetch(`https://api.github.com/users/${search}`)
+      .then((response) => response.json())
+      .then((data) => setName(data.name));
+  }, []);
+
+  useEffect(() => {
+    fetch(`https://api.github.com/users/${search}`)
+      .then((response) => response.json())
+      .then((data) => setErro(data.message));
+  }, []);
+
 
   return (
 
     <ScrollView>
     <SafeAreaView style={styles.containerProfile}>
-  
+
+      
       <Image style={styles.squareProfile}source ={{uri:avatar}}/>
-
-
-      <Text style={{ fontSize: 30, fontWeight: 'bold' }}>{name}</Text>
+ 
+ 
+      <Text style={{ fontSize: 30, fontWeight: 'bold' }}>{erro}</Text>
       <Text style={{ fontSize: 20, color: '#8f8e93' }}>@{user}</Text>
 
       <View style={styles.info}>
@@ -171,7 +191,7 @@ function Profile({ navigation }) {
         </TouchableOpacity>
 
 
-        <TouchableOpacity style={styles.specifies}>
+        <TouchableOpacity style={styles.specifies} onPress={Orgs}>
           <View style={styles.boxIcons}>
             <Feather name="headphones" size={30} color="black" />
           </View>
@@ -214,7 +234,7 @@ function Profile({ navigation }) {
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity style={styles.reset} onPress={() => navigation.popToTop()}>
+      <TouchableOpacity style={styles.reset} onPress={Resetar}>
         <Ionicons name="exit-outline" size={20} color="black" />
         <Text>   </Text>
         <Text style={{ fontSize: 20, color: 'black' }}>Resetar</Text>
@@ -224,8 +244,6 @@ function Profile({ navigation }) {
     </ScrollView>
   );
 }
-
-
 
 const Followers = () => {
   const [followers, setFollowers] = useState([]);
@@ -264,8 +282,6 @@ const Followers = () => {
   );
 }
 
-
-
 const Repo = () => {
   const [repo, setRepo] = useState([]);
 
@@ -288,7 +304,7 @@ const Repo = () => {
           return (
             <View style={{borderWidth:0.5, borderColor:'#ececec'}}>
             <Text style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 15,marginTop:10}} >{item.name}</Text>
-            <Text style={{ fontSize: 15, color: '#bfbfbf', marginLeft: 15, marginBottom:10 }} >{item.description}</Text>
+            <Text style={{ fontSize: 15, color: '#bfbfbf', marginLeft: 15, marginBottom:10 }} >{item.description == null ? <Text  style={{ fontSize: 15, color: '#bfbfbf', marginLeft: 15, marginBottom:10 }}>Sem descrição</Text> : <Text  style={{ fontSize: 15, color: '#bfbfbf', marginLeft: 15, marginBottom:10 }}>{item.description}</Text>} </Text>
           </View>
           );
         }}
@@ -320,7 +336,41 @@ function Bio() {
   );
 }
 
+function Orgs(){
 
+  const [org, setOrgs] = useState([]);
+
+  const route = useRoute();
+  const search = route.params.id;
+
+
+  useEffect(() => {
+    fetch(`https://api.github.com/users/${search}/orgs`)
+      .then((response) => response.json())
+      .then((data) => setOrgs(data));
+  }, []);
+
+  return (
+    <View style={styles.repo}>
+      <FlatList
+        data={org}
+        keyExtractor={(element) => element}
+        renderItem={({ item }) => {
+          return (
+            <View style={{borderWidth:0.5, borderColor:'#ececec'}}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 15,marginTop:10}} >{item == null ? <Text  style={{  fontSize: 20, fontWeight: 'bold', marginLeft: 15,marginTop:10 }}> Este usuário não apresenta repositórios </Text> : <Text  style={{  fontSize: 20, fontWeight: 'bold', marginLeft: 15,marginTop:10 }}>{item.login}</Text>}</Text>
+            <Text style={{ fontSize: 15, color: '#bfbfbf', marginLeft: 15, marginBottom:10 }} >{item.description == null ? <Text  style={{ fontSize: 15, color: '#bfbfbf', marginLeft: 15, marginBottom:10 }}>Sem descrição</Text> : <Text  style={{ fontSize: 15, color: '#bfbfbf', marginLeft: 15, marginBottom:10 }}>{item.description}</Text>} </Text>
+          </View>
+          );
+        }}
+      />
+    </View>
+  );
+
+
+
+
+}
 export default function App() {
 
   return (
@@ -328,10 +378,12 @@ export default function App() {
       <Stack.Navigator>
         <Stack.Screen name='Home' component={Home} 
           options={{headerShown: false}}/>
-        <Stack.Screen name='Profile' component={Profile} />
+        <Stack.Screen name='Profile' component={Profile} 
+          options={{headerShown: false}}/>
         <Stack.Screen name='Bio' component={Bio} />
+        <Stack.Screen name='Orgs' component={Orgs}/>
         <Stack.Screen name='Repo' component={Repo} />
-        <Stack.Screen name='Followers' component={Followers} />
+        <Stack.Screen name='Followers' component={Followers}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -354,11 +406,9 @@ const styles = StyleSheet.create({
   },
   
   containerSearch: {
-    height:120,
-    backgroundColor: '#fff',
+    flex:1,
+    backgroundColor: 'rgba(0, 0, 0, 0.9)',
     alignItems: 'center',
-    flexDirection: 'row',
-    flexWrap:'wrap',
     justifyContent: 'center',
     borderWidth:1,
     borderColor:'#D3D3D3',
@@ -401,7 +451,7 @@ const styles = StyleSheet.create({
   },
 
   textAlert: {
-    color: 'black',
+    color: 'white',
     fontSize: 15,
     margin: 10,
     textAlign: 'center',
@@ -425,7 +475,7 @@ const styles = StyleSheet.create({
     borderRadius: 60,
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
-    marginTop: 50
+    marginTop: 70
 
   },
   info: {
@@ -437,7 +487,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginTop: 30,
+    marginTop: 50,
     borderWidth: 1,
     borderColor: '#eeeeee'
 
@@ -466,7 +516,7 @@ const styles = StyleSheet.create({
     width: 380,
     height: 70,
     backgroundColor: '#ffffff',
-    marginTop: 40,
+    marginTop: 50,
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
@@ -518,15 +568,20 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
 
-  div:{
-    width:500,
-    height:50,
-    alignItems:'center',
-    justifyContent:'center',
-  },
+  
   followersProfile: {
     width: 50,
     height: 50,
     borderRadius: 60,
+  },
+  div:{
+    justifyContent:'center',
+    alignItems:'center',
+    flexDirection:'column'
+  },
+  rowInput:{
+    justifyContent:'center',
+    alignItems:'center',
+    flexDirection:'row'
   },
 });
