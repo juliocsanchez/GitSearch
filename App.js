@@ -127,13 +127,21 @@ function Profile({ navigation }) {
     })
   };
 
+useEffect(() => {
+    fetch(`https://api.github.com/users/${search}`)
+      .then((response) => response.json())
+      .then((data) => {
+        return(
+        setErro(data.message) 
+        )
+      });
+  }, [])
+
 
   useEffect(() => {
     fetch(`https://api.github.com/users/${search}`)
       .then((response) => response.json())
-      .then((data) => {
-        return setAvatar(data.avatar_url);
-      });
+      .then((data) => setAvatar(data.avatar_url));
   }, []);
 
   useEffect(() => {
@@ -154,24 +162,18 @@ function Profile({ navigation }) {
       .then((data) => setName(data.name));
   }, []);
 
-  useEffect(() => {
-    fetch(`https://api.github.com/users/${search}`)
-      .then((response) => response.json())
-      .then((data) => setErro(data.message));
-  }, []);
 
 
   return (
-
+    
     <ScrollView>
     <SafeAreaView style={styles.containerProfile}>
 
-      
-      <Image style={styles.squareProfile}source ={{uri:avatar}}/>
+      <Image style={styles.squareProfile} source ={{uri:avatar}}/>
  
- 
-      <Text style={{ fontSize: 30, fontWeight: 'bold' }}>{erro}</Text>
-      <Text style={{ fontSize: 20, color: '#8f8e93' }}>@{user}</Text>
+
+      <Text style={{ fontSize: 30, fontWeight: 'bold',marginTop:10 }}>{name == null ? <Text style={{ fontSize: 30, fontWeight: 'bold',marginTop:10 }}> Usuário não encontrado</Text> : <Text style={{ fontSize: 30, fontWeight: 'bold',marginTop:10 }}>{name}</Text>}</Text>
+      <Text style={{ fontSize: 20, color: '#8f8e93' }}>{user == null ? <Text style={{ fontSize: 20, color: '#8f8e93' }}>Erro, tente novamente</Text> :  <Text style={{ fontSize: 20, color: '#8f8e93' }}>@{user}</Text>}</Text>
 
       <View style={styles.info}>
 
@@ -242,7 +244,10 @@ function Profile({ navigation }) {
 
     </SafeAreaView>
     </ScrollView>
+   
+    
   );
+      
 }
 
 const Followers = () => {
@@ -299,11 +304,10 @@ const Repo = () => {
     <View style={styles.repo}>
       <FlatList
         data={repo}
-        keyExtractor={(element) => element.name}
-        renderItem={({ item }) => {
+        renderItem={({item}) => {
           return (
             <View style={{borderWidth:0.5, borderColor:'#ececec'}}>
-            <Text style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 15,marginTop:10}} >{item.name}</Text>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 15,marginTop:10}} >{item.name }</Text>
             <Text style={{ fontSize: 15, color: '#bfbfbf', marginLeft: 15, marginBottom:10 }} >{item.description == null ? <Text  style={{ fontSize: 15, color: '#bfbfbf', marginLeft: 15, marginBottom:10 }}>Sem descrição</Text> : <Text  style={{ fontSize: 15, color: '#bfbfbf', marginLeft: 15, marginBottom:10 }}>{item.description}</Text>} </Text>
           </View>
           );
@@ -487,7 +491,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginTop: 50,
+    marginTop: 30,
     borderWidth: 1,
     borderColor: '#eeeeee'
 
