@@ -11,6 +11,7 @@ import { Feather } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRoute } from '@react-navigation/native';
+import Skeleton from './src/Skeleton';
 
 // https://api.github.com/users/{id} -->  usuários
 // https://api.github.com/users/{id}/followers --> seguidores
@@ -156,19 +157,16 @@ useEffect(() => {
       .then((data) => setName(data.name));
   }, []);
 
-  useEffect(() => {
-    fetch(`https://api.github.com/users/${search}`)
-      .then((response) => response.json())
-      .then((data) => setName(data.name));
-  }, []);
-
-
 
   return (
     
-    <ScrollView>
-    <SafeAreaView style={styles.containerProfile}>
 
+    
+    <ScrollView>
+       
+     
+    <SafeAreaView style={styles.containerProfile}>
+    {/* <Skeleton></Skeleton> */}
       <Image style={styles.squareProfile} source ={{uri:avatar}}/>
  
 
@@ -268,6 +266,13 @@ const Followers = () => {
 
 
   return (
+
+    followers.message  ?  
+    
+    <View style={styles.erroMessageBackground}>
+      <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign:'center'}} >Este usuário não apresenta seguidores</Text>
+    </View>
+    :
     <View style={styles.repo}>
       <FlatList
         data={followers}
@@ -301,13 +306,20 @@ const Repo = () => {
   }, []);
 
   return (
+
+      repo.message  ? 
+
+      <View style={styles.erroMessageBackground}>
+      <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign:'center'}} >Este usuário não apresenta repositórios públicos</Text>
+      </View>
+      :
     <View style={styles.repo}>
       <FlatList
         data={repo}
         renderItem={({item}) => {
           return (
             <View style={{borderWidth:0.5, borderColor:'#ececec'}}>
-            <Text style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 15,marginTop:10}} >{item.name }</Text>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 15,marginTop:10}} >{item.name}</Text>
             <Text style={{ fontSize: 15, color: '#bfbfbf', marginLeft: 15, marginBottom:10 }} >{item.description == null ? <Text  style={{ fontSize: 15, color: '#bfbfbf', marginLeft: 15, marginBottom:10 }}>Sem descrição</Text> : <Text  style={{ fontSize: 15, color: '#bfbfbf', marginLeft: 15, marginBottom:10 }}>{item.description}</Text>} </Text>
           </View>
           );
@@ -355,6 +367,13 @@ function Orgs(){
   }, []);
 
   return (
+
+    org.message ?
+
+    <View style={styles.erroMessageBackground}>
+    <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign:'center'}} >Este usário é inválido ou não apresenta organizçãoes</Text>
+    </View>
+    :
     <View style={styles.repo}>
       <FlatList
         data={org}
@@ -362,13 +381,15 @@ function Orgs(){
         renderItem={({ item }) => {
           return (
             <View style={{borderWidth:0.5, borderColor:'#ececec'}}>
-            <Text style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 15,marginTop:10}} >{item == null ? <Text  style={{  fontSize: 20, fontWeight: 'bold', marginLeft: 15,marginTop:10 }}> Este usuário não apresenta repositórios </Text> : <Text  style={{  fontSize: 20, fontWeight: 'bold', marginLeft: 15,marginTop:10 }}>{item.login}</Text>}</Text>
-            <Text style={{ fontSize: 15, color: '#bfbfbf', marginLeft: 15, marginBottom:10 }} >{item.description == null ? <Text  style={{ fontSize: 15, color: '#bfbfbf', marginLeft: 15, marginBottom:10 }}>Sem descrição</Text> : <Text  style={{ fontSize: 15, color: '#bfbfbf', marginLeft: 15, marginBottom:10 }}>{item.description}</Text>} </Text>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 15,marginTop:10}} >{item.login}</Text>
+            <Text style={{ fontSize: 15, color: '#bfbfbf', marginLeft: 15, marginBottom:10 }} >{item.description}</Text>
+            
           </View>
           );
         }}
       />
     </View>
+   
   );
 
 
@@ -587,5 +608,11 @@ const styles = StyleSheet.create({
     justifyContent:'center',
     alignItems:'center',
     flexDirection:'row'
+  },
+  erroMessageBackground: {
+    flex:1,
+    backgroundColor:'white',
+    justifyContent:'center',
+    alignItems:'center'
   },
 });
