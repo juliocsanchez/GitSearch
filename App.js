@@ -13,10 +13,6 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { useRoute } from '@react-navigation/native';
 import Skeleton from './src/Skeleton';
 
-// https://api.github.com/users/{id} -->  usuários
-// https://api.github.com/users/{id}/followers --> seguidores
-// https://api.github.com/users/{id}/repos --> repositórios
-// https://api.github.com/users/{id}/orgs --> organizações
 
 const Stack = createNativeStackNavigator();
 
@@ -86,17 +82,14 @@ function Home() {
   );
 }
 
+
 function Profile({ navigation }) {
 
-
-  const [avatar, setAvatar] = useState(null);
-  const [user, setUser] = useState(null);
-  const [name, setName] = useState(null);
-  const [erro, setErro] = useState(null);
-  
-
+  const [data, setData] = useState([]);
+ 
   const route = useRoute();
   const search = route.params.id;
+
 
   const Repository = () => {
     navigation.navigate ('Repo',{
@@ -128,50 +121,25 @@ function Profile({ navigation }) {
     })
   };
 
-useEffect(() => {
-    fetch(`https://api.github.com/users/${search}`)
-      .then((response) => response.json())
-      .then((data) => {
-        return(
-        setErro(data.message) 
-        )
-      });
-  }, [])
-
-
+ 
   useEffect(() => {
     fetch(`https://api.github.com/users/${search}`)
       .then((response) => response.json())
-      .then((data) => setAvatar(data.avatar_url));
-  }, []);
-
-  useEffect(() => {
-    fetch(`https://api.github.com/users/${search}`)
-      .then((response) => response.json())
-      .then((data) => setUser(data.login));
-  }, []);
-
-  useEffect(() => {
-    fetch(`https://api.github.com/users/${search}`)
-      .then((response) => response.json())
-      .then((data) => setName(data.name));
+      .then((data) => setData(data));
   }, []);
 
 
   return (
-    
-
-    
+  
     <ScrollView>
        
-     
     <SafeAreaView style={styles.containerProfile}>
-    {/* <Skeleton></Skeleton> */}
-      <Image style={styles.squareProfile} source ={{uri:avatar}}/>
+     {/* <Skeleton></Skeleton>  */}
+      <Image style={styles.squareProfile} source ={{uri:data.avatar_url}}/>
  
 
-      <Text style={{ fontSize: 30, fontWeight: 'bold',marginTop:10 }}>{name == null ? <Text style={{ fontSize: 30, fontWeight: 'bold',marginTop:10 }}> Usuário não encontrado</Text> : <Text style={{ fontSize: 30, fontWeight: 'bold',marginTop:10 }}>{name}</Text>}</Text>
-      <Text style={{ fontSize: 20, color: '#8f8e93' }}>{user == null ? <Text style={{ fontSize: 20, color: '#8f8e93' }}>Erro, tente novamente</Text> :  <Text style={{ fontSize: 20, color: '#8f8e93' }}>@{user}</Text>}</Text>
+      <Text style={{ fontSize: 30, fontWeight: 'bold',marginTop:10 }}>{data.name == null ? <Text style={{ fontSize: 30, fontWeight: 'bold',marginTop:10 }}> Usuário não encontrado</Text> : <Text style={{ fontSize: 30, fontWeight: 'bold',marginTop:10 }}>{data.name}</Text>}</Text>
+      <Text style={{ fontSize: 20, color: '#8f8e93' }}>{data.login == null ? <Text style={{ fontSize: 20, color: '#8f8e93' }}>Erro, tente novamente</Text> :  <Text style={{ fontSize: 20, color: '#8f8e93' }}>@{data.login}</Text>}</Text>
 
       <View style={styles.info}>
 
@@ -331,7 +299,7 @@ const Repo = () => {
 
 function Bio() {
 
-  const [bio, setBio] = useState(null);
+  const [bio, setBio] = useState([]);
 
   const route = useRoute();
   const search = route.params.id;
@@ -340,13 +308,13 @@ function Bio() {
   useEffect(() => {
     fetch(`https://api.github.com/users/${search}`)
       .then((response) => response.json())
-      .then((data) => setBio(data.bio));
+      .then((data) => setBio(data));
   }, []);
 
   return (
     <View style={styles.containerBio}>
       <View style={styles.bio}>
-      <Text style={styles.textbio}>{bio == null ? <Text> Esse usário não possui biografia</Text> : <Text>{bio}</Text>}</Text>
+      <Text style={styles.textbio}>{bio.bio == null ? <Text> Esse usário não possui biografia</Text> : <Text>{bio.bio}</Text>}</Text>
       </View>
     </View>
   );

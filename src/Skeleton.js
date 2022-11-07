@@ -8,21 +8,14 @@ export default function Skeleton() {
     return(
 
         <View style={styles.container}>
-            <View style={styles.card}>
+        <View style={styles.card}>  
 
-                <View style={{backgroundColor: '#ececec',
-                width: 200,
-                height: 200,
-                borderRadius: 60,
-                marginTop: 70}}>
-                    
-                    <View>
-                    <View style={{backgroundColor: '#ececec', height:32, widht:30, borderRadius:20}}></View>
-                    <View style={{backgroundColor: '#ececec', height: 32, widht:30, borderRadius: 20}}></View>
-                    </View>
-
+                <View style={{backgroundColor: '#ececec', width: 200, height: 200, borderRadius: 60, marginTop: 20}}>
+                  
+                {/* <View style={{backgroundColor: '#ececec', height:32, widht:20, borderRadius:20, marginTop:210}}></View>
+                <View style={{backgroundColor: '#ececec', height: 32, borderRadius: 10, marginTop:10}}></View> */}
                 </View>
-            </View>
+        </View>
         </View>
 
     );
@@ -30,13 +23,11 @@ export default function Skeleton() {
 
 const styles = StyleSheet.create({
     container:{
-        margin:10,
+      margin:10
     },
-
     card:{
-        width: 20,
-        flexDirection:'row',
+        width: widht - 20,
+        flexDirection:'column',
         justifyContent:'space-around'
-    }
-
+    },
 });
