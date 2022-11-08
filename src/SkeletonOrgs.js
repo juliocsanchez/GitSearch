@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, Animated } from 'react-native';
 import React, {useEffect} from 'react';
 
-export default function Skeleton({visible, children}) {
+export default function SkeletonOrgs({visible, children}) {
 
 const AnimatedValue = new Animated.Value(0);   
 const translateX = AnimatedValue.interpolate({
@@ -39,19 +39,6 @@ if (visible){
 return (
     <View style={styles.container}>
 
-      <View style = {styles.square}>
-        
-        <Animated.View style={{
-          width:'30%',
-          height:'100%',
-          opacity: 0.5,
-          backgroundColor:'#fffafa',
-          transform:[{ translateX: translateX}]
-        }}>
-          
-        </Animated.View>
-
-        </View>   
       <View style = {styles.skeletonName}>
 
       <Animated.View style={{
@@ -88,11 +75,11 @@ return (
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f7fc',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: 'white',
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
     flexDirection:'column',
-    border:''
+  
   },
   square:{
     width:200,
@@ -105,14 +92,15 @@ const styles = StyleSheet.create({
   },
   skeletonName:{
     width:300,
-    height:40,
+    height:20,
     backgroundColor:'#ececec',
     borderRadius:60,
-    marginTop:10
+    marginTop:10,
+   
   },
   skeletonUser:{
-    width:200,
-    height:20,
+    width:400,
+    height:40,
     backgroundColor:'#ececec',
     borderRadius:60,
     marginTop:5

@@ -39,7 +39,7 @@ if (visible){
 return (
     <View style={styles.container}>
 
-      <View style = {styles.square}>
+      <View style = {styles.followersProfile}>
         
         <Animated.View style={{
           width:'30%',
@@ -64,17 +64,6 @@ return (
           
         </Animated.View>
       </View>
-
-      <View style= {styles.skeletonUser}>
-      <Animated.View style={{
-          width:'30%',
-          height:'100%',
-          opacity: 0.5,
-          backgroundColor:'#fffafa',
-          transform:[{ translateX: translateX}]
-        }}>
-        </Animated.View>
-      </View>
     </View>
   );
 }
@@ -87,34 +76,25 @@ return (
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#f8f7fc',
-    alignItems: 'center',
-    justifyContent: 'center',
+   flex:1,
+    backgroundColor: 'white',
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
     flexDirection:'column',
-    border:''
-  },
-  square:{
-    width:200,
-    height:200,
-    backgroundColor:'#ececec',
-    borderRadius:60,
-    overflow:'hidden',
-    marginTop:70
-  
+    flexDirection:'row',
+    marginTop:30
   },
   skeletonName:{
     width:300,
     height:40,
     backgroundColor:'#ececec',
     borderRadius:60,
-    marginTop:10
   },
-  skeletonUser:{
-    width:200,
-    height:20,
+  followersProfile: {
+    width: 50,
+    height: 50,
+    borderRadius: 60,
     backgroundColor:'#ececec',
-    borderRadius:60,
-    marginTop:5
-  }
+    marginRight:5
+  },
 });
