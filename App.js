@@ -218,11 +218,13 @@ function Profile({ navigation }) {
           </TouchableOpacity>
         </View>
 
+        <View style={styles.whiteBack}>
         <TouchableOpacity style={styles.reset} onPress={Resetar}>
           <Ionicons name="exit-outline" size={20} color="black" />
           <Text>   </Text>
           <Text style={{ fontSize: 20, color: 'black' }}>Resetar</Text>
         </TouchableOpacity>
+        </View>
 
       </SafeAreaView>
     </ScrollView>
@@ -555,7 +557,6 @@ const styles = StyleSheet.create({
     width: 380,
     height: 70,
     backgroundColor: '#ffffff',
-    marginTop: 50,
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
@@ -628,5 +629,14 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     justifyContent: 'center',
     alignItems: 'center'
+  },
+  whiteBack:{
+    backgroundColor:'white',
+    width:500,
+    height:200,
+    justifyContent:'center',
+    alignItems:'center',
+    borderRadius:80,
+    marginTop:10
   },
 });
