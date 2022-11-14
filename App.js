@@ -21,8 +21,7 @@ const Stack = createNativeStackNavigator();
 function Home() {
 
   const [modal, setModal] = useState(false);
-  const [id, setId] = useState('');
-
+  const [id, setId] = useState([]);
 
   const navigation = useNavigation();
 
@@ -43,9 +42,7 @@ function Home() {
           setModal(!modal);
         }}
       >
-
         <SafeAreaView style={styles.containerSearch}>
-
           <View style={styles.div}>
             <Text style={styles.textAlert}>Digite o nome de usuário</Text>
 
@@ -59,17 +56,14 @@ function Home() {
                 keyboardType='default'
                 value={id}
                 onChangeText={idtext => setId(idtext)}
-
               />
 
               <TouchableOpacity style={styles.OkButton} onPress={SearchID} >
                 <Text style={styles.text}>Ok</Text>
               </TouchableOpacity>
             </View>
-
           </View>
         </SafeAreaView>
-
       </Modal>
 
       <View style={styles.square}>
@@ -79,7 +73,6 @@ function Home() {
       </View>
       <Text style={styles.text}>Clique na lupa e escreva o nome do usuário (id) do Github que você deseja consultar
       </Text>
-
     </SafeAreaView>
   );
 }
@@ -87,7 +80,6 @@ function Home() {
 function Profile({ navigation }) {
 
   const [data, setData] = useState([]);
-
   const [loading, setLoading] = useState(true);
 
   const route = useRoute();
@@ -136,31 +128,27 @@ function Profile({ navigation }) {
       .then((data) => setData(data));
   }, []);
 
-
   return (
 
-  
     <ScrollView>
- 
+       
       <SafeAreaView style={styles.containerProfile}>
+     
 
-      <Skeleton visible={loading}>
-          
-          <Image style={styles.squareProfile} source={{ uri: data.avatar_url }} />
-
-
-          <Text style={{ fontSize: 30, fontWeight: 'bold', marginTop: 10 }}>{data.name == null ? <Text style={{ fontSize: 30, fontWeight: 'bold', marginTop: 10 }}> Usuário não encontrado</Text> : <Text style={{ fontSize: 30, fontWeight: 'bold', marginTop: 10 }}>{data.name}</Text>}</Text>
-          <Text style={{ fontSize: 20, color: '#8f8e93' }}>{data.login == null ? <Text style={{ fontSize: 20, color: '#8f8e93' }}>Erro, tente novamente</Text> : <Text style={{ fontSize: 20, color: '#8f8e93' }}>@{data.login}</Text>}</Text>
-
-          </Skeleton>
+     
+         <Skeleton visible={loading} style={styles.test}> 
         
- 
+         <Image style={styles.squareProfile} source={{uri:data.avatar_url}}></Image>
 
 
+
+
+            <Text style={{ fontSize: 30, fontWeight: 'bold', marginTop: 10 }}>{data.name == null ? <Text style={{ fontSize: 30, fontWeight: 'bold', marginTop: 10 }}> Usuário não encontrado</Text> : <Text style={{ fontSize: 30, fontWeight: 'bold', marginTop: 10 }}>{data.name}</Text>}</Text>
+            <Text style={{ fontSize: 20, color: '#8f8e93' }}>{data.login == null ? <Text style={{ fontSize: 20, color: '#8f8e93' }}>Erro, tente novamente</Text> : <Text style={{ fontSize: 20, color: '#8f8e93' }}>@{data.login}</Text>}</Text>
+         </Skeleton>
+        
         <View style={styles.info}>
-
           <TouchableOpacity style={[styles.specifies, { borderTopEndRadius: 20, borderTopStartRadius: 20 }]} onPress={Biography}>
-
             <View style={styles.boxIcons}>
               <Ionicons name="person-outline" size={30} color="black" />
               <View>
@@ -171,9 +159,7 @@ function Profile({ navigation }) {
             <View style={{ justifyContent: 'flex-end', marginLeft: 95 }}>
               <MaterialIcons name="arrow-forward-ios" size={20} color="black" />
             </View>
-
           </TouchableOpacity>
-
 
           <TouchableOpacity style={styles.specifies} onPress={Orgs}>
             <View style={styles.boxIcons}>
@@ -186,7 +172,6 @@ function Profile({ navigation }) {
             <View style={{ justifyContent: 'flex-end', margin: 25 }}>
               <MaterialIcons name="arrow-forward-ios" size={20} color="black" />
             </View>
-
           </TouchableOpacity>
 
 
@@ -225,13 +210,9 @@ function Profile({ navigation }) {
           <Text style={{ fontSize: 20, color: 'black' }}>Resetar</Text>
         </TouchableOpacity>
         </View>
-
       </SafeAreaView>
     </ScrollView>
-   
-
   );
-
 }
 
 const Followers = () => {
@@ -251,9 +232,6 @@ const Followers = () => {
       .then((response) => response.json())
       .then((data) => setFollowers(data));
   }, []);
-
-  
-
 
   return (
 
@@ -279,7 +257,6 @@ const Followers = () => {
             );
           }}
         />
-
       </View>
   );
 }
@@ -290,8 +267,6 @@ const Repo = () => {
   const route = useRoute();
   const search = route.params.id;
   const [loading, setLoading] = useState(true);
-
-  
 
   useEffect(() => {
     fetch(`https://api.github.com/users/${search}/repos`)
@@ -328,7 +303,6 @@ const Repo = () => {
           }}
         />
       </View>
-  
   );
 }
 
@@ -405,11 +379,7 @@ function Orgs() {
           }}
         />
       </View>
-  
-    
-
   );
-
 }
 
 export default function App() {
@@ -447,7 +417,7 @@ const styles = StyleSheet.create({
   },
 
   containerSearch: {
-    flex: 1,
+    flex:1,
     backgroundColor: 'rgba(0, 0, 0, 0.9)',
     alignItems: 'center',
     justifyContent: 'center',
@@ -455,12 +425,25 @@ const styles = StyleSheet.create({
     borderColor: '#D3D3D3',
     borderRadius: 20,
   },
+
+  containerSearchProfile: {
+    widht:50,
+    height:50,
+    backgroundColor: 'rgba(0, 0, 0, 0.9)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#D3D3D3',
+    borderRadius: 20,
+    flexDirection:'row'
+  },
+
   containerProfile: {
     flex: 1,
     backgroundColor: '#f8f7fc',
     alignItems: 'center',
     justifyContent: 'flex-start',
-    flexDirection: "column",
+    flexDirection: 'column',
     borderColor: "black"
   },
 
@@ -514,9 +497,10 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
     borderRadius: 60,
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
     alignItems: 'flex-end',
-    marginTop: 70
+    flexDirection:'row',
+    marginTop:80
 
   },
   info: {
@@ -543,7 +527,6 @@ const styles = StyleSheet.create({
     marginLeft: 10,
 
   },
-
   backButton: {
     width: 50,
     height: 50,
@@ -552,6 +535,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 80,
     marginRight: 20,
+  },
+  backButtonProfile: {
+    width: 30,
+    height: 30,
+    backgroundColor: '#ececec',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 80,
+  
   },
   reset: {
     width: 380,
@@ -608,7 +600,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
 
-
   followersProfile: {
     width: 50,
     height: 50,
@@ -639,4 +630,10 @@ const styles = StyleSheet.create({
     borderRadius:80,
     marginTop:10
   },
+  viewLupa:{
+    flex:1,
+    justifyContent:'flex-end',
+    alignItems:'flex-end',
+   
+  }
 });
