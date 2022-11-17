@@ -26,7 +26,7 @@ function Home() {
   const navigation = useNavigation();
 
   const SearchID = () => {
-    navigation.push('Profile', {
+    navigation.navigate('Profile', {
       id: id,
     })
   };
